@@ -10,6 +10,7 @@ services:
       - "5440:5432"
     volumes:
       - users-data:/var/lib/postgresql/data
+      - ./users-ms/database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   postgres-hotels:
     image: postgres:15-alpine
@@ -22,6 +23,7 @@ services:
       - "5441:5432"
     volumes:
       - hotels-data:/var/lib/postgresql/data
+      - ./hotels-ms/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   sqlserver-reservations:
     image: mcr.microsoft.com/mssql/server:2022-latest

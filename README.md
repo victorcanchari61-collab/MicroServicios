@@ -18,24 +18,31 @@ Sistema completo de reservas de hoteles con arquitectura de microservicios.
 git clone https://github.com/victorcanchari61-collab/MicroServicios.git
 cd MicroServicios
 
-# 2. Levantar todo
+# 2. Levantar todo (primera vez tarda más)
 docker-compose up -d --build
 
 # 3. Esperar 30 segundos e inicializar DB
 docker exec -it users-service php artisan migrate
 
-# 4. Acceder al frontend (opcional)
-cd frontend-reservas-hoteles
-npm install
-npm start
+# 4. Acceder al sistema
+# Frontend: http://localhost:4200
+# API Gateway: http://localhost:3000
 ```
 
-Frontend: `http://localhost:4200`
+## 👥 Datos Iniciales
 
-## 👥 Usuario Admin
+El sistema viene con datos de prueba precargados:
 
+**Usuario Administrador:**
 - Email: `admin@hotel.com`
 - Password: `admin123`
+
+**Hoteles de ejemplo:**
+- Hotel Paradise (5 estrellas) - 3 habitaciones
+- Hotel Central (4 estrellas) - 3 habitaciones  
+- Hotel Cielo (4 estrellas) - 3 habitaciones
+
+**Total: 3 hoteles con 9 habitaciones listas para reservar**
 
 ## 📝 Comandos
 
