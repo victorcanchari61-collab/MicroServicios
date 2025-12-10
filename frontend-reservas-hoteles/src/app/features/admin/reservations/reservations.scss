@@ -1,0 +1,185 @@
+$primary: #667eea;
+$secondary: #764ba2;
+$success: #28a745;
+$danger: #dc3545;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-600: #6c757d;
+$gray-800: #343a40;
+
+.reservations-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+  padding: 2rem;
+}
+
+.page-header {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+
+  h1 {
+    margin: 0;
+    color: $gray-800;
+    font-size: 1.8rem;
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    color: $gray-600;
+  }
+}
+
+.btn-back, .btn-logout {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-back {
+  background: $gray-200;
+  color: $gray-800;
+
+  &:hover {
+    background: darken($gray-200, 10%);
+  }
+}
+
+.btn-logout {
+  background: $danger;
+  color: white;
+
+  &:hover {
+    background: darken($danger, 10%);
+  }
+}
+
+.page-main {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loading, .empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  .icon {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+  }
+
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid $gray-200;
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.reservations-table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+      color: white;
+
+      th {
+        padding: 1.25rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid $gray-200;
+        transition: background 0.2s;
+
+        &:hover {
+          background: $gray-100;
+        }
+      }
+
+      td {
+        padding: 1.25rem 1rem;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.reservation-code {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: $primary;
+}
+
+.hotel-info {
+  font-weight: 500;
+}
+
+.price {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: $success;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.pending {
+    background: lighten(#ffc107, 35%);
+    color: darken(#ffc107, 20%);
+  }
+
+  &.confirmed {
+    background: lighten($success, 45%);
+    color: darken($success, 10%);
+  }
+
+  &.cancelled {
+    background: lighten($danger, 35%);
+    color: darken($danger, 10%);
+  }
+
+  &.completed {
+    background: lighten($gray-600, 40%);
+    color: $gray-800;
+  }
+}

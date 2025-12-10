@@ -1,0 +1,114 @@
+<div class="reservations-page">
+  <header class="page-header">
+    <div class="header-content">
+      <div>
+        <h1>Mis Reservas</h1>
+        <p>Bienvenido, {{ currentUser()?.name }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" (click)="goToHotels()">
+          🏨 Ver Hoteles
+        </button>
+        <button class="btn-logout" (click)="logout()">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    @if (loading() && reservations().length === 0) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Cargando reservas...</p>
+      </div>
+    } @else if (reservations().length === 0) {
+      <div class="empty-state">
+        <div class="icon">📅</div>
+        <h2>No tienes reservas</h2>
+        <p>Explora nuestros hoteles y haz tu primera reserva</p>
+        <button class="btn-primary" (click)="goToHotels()">
+          Ver Hoteles Disponibles
+        </button>
+      </div>
+    } @else {
+      <div class="reservations-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Hotel</th>
+              <th>Habitación</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Huéspedes</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reservation of reservations(); track reservation.id) {
+              <tr>
+                <td>
+                  <div class="reservation-code">
+                    <span class="code-icon">🔖</span>
+                    <span class="code-text">{{ reservation.id.substring(0, 8) }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="hotel-info">
+                    <span class="hotel-icon">🏨</span>
+                    <span>{{ reservation.hotelName || 'Hotel' }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="room-number">
+                    🚪 <strong>{{ reservation.roomNumber || 'Sin asignar' }}</strong>
+                  </div>
+                </td>
+                <td>
+                  <div class="date">
+                    📅 {{ reservation.checkInDate | date:'dd/MM/yyyy' }}
+                  </div>
+                </td>
+                <td>
+                  <div class="date">
+                    📅 {{ reservation.checkOutDate | date:'dd/MM/yyyy' }}
+                  </div>
+                </td>
+                <td>
+                  <div class="guests">
+                    👥 {{ reservation.numberOfGuests }}
+                  </div>
+                </td>
+                <td>
+                  <div class="price">
+                    S/ {{ reservation.totalPrice | number:'1.2-2' }}
+                  </div>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="getStatusClass(reservation.status)">
+                    {{ getStatusText(reservation.status) }}
+                  </span>
+                </td>
+                <td>
+                  <div class="actions">
+                    @if (reservation.status === 'Confirmed' || reservation.status === 'Pending') {
+                      <button 
+                        class="btn-cancel" 
+                        (click)="cancelReservation(reservation)"
+                        [disabled]="loading()">
+                        ❌ Cancelar
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+</div>

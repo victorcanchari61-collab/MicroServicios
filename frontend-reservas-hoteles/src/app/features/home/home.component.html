@@ -1,0 +1,47 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Encuentra tu hotel perfecto</h1>
+      <p class="hero-subtitle">
+        Reserva hoteles de calidad al mejor precio. Miles de opciones en todo el mundo.
+      </p>
+      <div class="hero-actions">
+        <a routerLink="/login" class="btn btn-primary">Iniciar sesión</a>
+        <a routerLink="/register" class="btn btn-secondary">Registrarse</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="floating-card">
+        <span class="card-icon">🏨</span>
+        <div class="card-content">
+          <h3>+1000 Hoteles</h3>
+          <p>En todo el mundo</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <h2 class="section-title">¿Por qué elegirnos?</h2>
+    <div class="features-grid">
+      @for (feature of features; track feature.title) {
+        <div class="feature-card">
+          <div class="feature-icon">{{ feature.icon }}</div>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="cta-content">
+      <h2>¿Listo para tu próxima aventura?</h2>
+      <p>Regístrate ahora y comienza a explorar miles de hoteles</p>
+      <a routerLink="/register" class="btn btn-light">Crear cuenta gratis</a>
+    </div>
+  </section>
+</div>

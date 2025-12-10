@@ -1,0 +1,149 @@
+<div class="hotels-page">
+  <header class="page-header">
+    <div class="header-content">
+      <div>
+        <h1>Hoteles Disponibles</h1>
+        <p>Bienvenido, {{ currentUser()?.name }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-reservations" (click)="goToMyReservations()">
+          📅 Mis Reservas
+        </button>
+        <button class="btn-logout" (click)="logout()">
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    @if (loading()) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Cargando hoteles...</p>
+      </div>
+    } @else if (hotels().length === 0) {
+      <div class="empty-state">
+        <div class="icon">🏨</div>
+        <h2>No hay hoteles disponibles</h2>
+        <p>Vuelve pronto para ver nuevas opciones</p>
+      </div>
+    } @else {
+      <div class="hotels-grid">
+        @for (hotel of hotels(); track hotel.id) {
+          <div class="hotel-card">
+            <div class="hotel-image">
+              <span class="hotel-icon">🏨</span>
+              <div class="hotel-stars">
+                @for (star of [].constructor(hotel.stars); track $index) {
+                  <span>⭐</span>
+                }
+              </div>
+            </div>
+            <div class="hotel-content">
+              <h3>{{ hotel.name }}</h3>
+              <p class="hotel-location">📍 {{ hotel.city }}, {{ hotel.country }}</p>
+              <p class="hotel-description">{{ hotel.description }}</p>
+              <div class="hotel-info">
+                <span class="info-item">🛏️ {{ hotel.availableRooms }} disponibles</span>
+              </div>
+              <div class="hotel-footer">
+                <div class="hotel-price">
+                  <span class="price-label">Desde</span>
+                  <span class="price-amount">S/ {{ hotel.pricePerNight }}</span>
+                  <span class="price-period">/ noche</span>
+                </div>
+                <button class="btn-reserve" (click)="openReservationModal(hotel)">
+                  Reservar
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </main>
+
+  <!-- Modal de Reserva -->
+  @if (showReservationModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        @if (!reservationSuccess()) {
+          <div class="modal-header">
+            <h2>Reservar {{ selectedHotel()?.name }}</h2>
+            <button class="btn-close" (click)="closeModal()">✕</button>
+          </div>
+          
+          <form [formGroup]="reservationForm" (ngSubmit)="submitReservation()" class="reservation-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Check-in</label>
+                <input type="date" formControlName="checkInDate" [min]="minDate">
+              </div>
+              <div class="form-group">
+                <label>Check-out</label>
+                <input type="date" formControlName="checkOutDate" [min]="minDate">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Número de huéspedes</label>
+                <input type="number" formControlName="numberOfGuests" min="1" max="10">
+              </div>
+              <div class="form-group">
+                <label>Teléfono (opcional)</label>
+                <input type="tel" formControlName="phone" placeholder="+51 999 999 999">
+              </div>
+            </div>
+
+            <div class="reservation-summary">
+              <div class="summary-row">
+                <span>Precio por noche:</span>
+                <span>S/ {{ selectedHotel()?.pricePerNight }}</span>
+              </div>
+              <div class="summary-row total">
+                <span>Total:</span>
+                <span>S/ {{ calculateTotal() }}</span>
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" (click)="closeModal()">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-primary" [disabled]="reservationForm.invalid || loading()">
+                @if (loading()) {
+                  <span class="spinner-sm"></span>
+                  Procesando...
+                } @else {
+                  Confirmar Reserva
+                }
+              </button>
+            </div>
+          </form>
+        } @else {
+          <div class="success-content">
+            <div class="success-icon">✅</div>
+            <h2>¡Reserva Confirmada!</h2>
+            <p>Tu reserva ha sido creada exitosamente.</p>
+            <p class="success-message">
+              Recibirás un correo de confirmación en breve.
+            </p>
+            
+            @if (whatsappLink()) {
+              <button class="btn-whatsapp" (click)="openWhatsApp()">
+                <span class="whatsapp-icon">📱</span>
+                Enviar confirmación por WhatsApp
+              </button>
+            }
+            
+            <button class="btn-primary" (click)="closeModal()">
+              Cerrar
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

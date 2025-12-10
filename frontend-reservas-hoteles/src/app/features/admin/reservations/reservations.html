@@ -1,0 +1,74 @@
+<div class="reservations-page">
+  <header class="page-header">
+    <div class="header-content">
+      <button class="btn-back" (click)="goToDashboard()">← Volver</button>
+      <div>
+        <h1>Todas las Reservas</h1>
+        <p>Panel de Administración</p>
+      </div>
+      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="page-main">
+    @if (loading() && reservations().length === 0) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Cargando reservas...</p>
+      </div>
+    } @else if (reservations().length === 0) {
+      <div class="empty-state">
+        <div class="icon">📅</div>
+        <h2>No hay reservas registradas</h2>
+        <p>Las reservas aparecerán aquí cuando los clientes hagan reservas</p>
+      </div>
+    } @else {
+      <div class="reservations-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Cliente</th>
+              <th>Hotel</th>
+              <th>Habitación</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Huéspedes</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reservation of reservations(); track reservation.id) {
+              <tr>
+                <td>
+                  <div class="reservation-code">
+                    🔖 {{ reservation.id.substring(0, 8) }}
+                  </div>
+                </td>
+                <td>{{ reservation.clientId.substring(0, 8) }}</td>
+                <td>
+                  <div class="hotel-info">
+                    🏨 {{ reservation.hotelName || 'Hotel' }}
+                  </div>
+                </td>
+                <td>
+                  <strong>🚪 {{ reservation.roomNumber || 'Sin asignar' }}</strong>
+                </td>
+                <td>📅 {{ reservation.checkInDate | date:'dd/MM/yyyy' }}</td>
+                <td>📅 {{ reservation.checkOutDate | date:'dd/MM/yyyy' }}</td>
+                <td>👥 {{ reservation.numberOfGuests }}</td>
+                <td class="price">S/ {{ reservation.totalPrice | number:'1.2-2' }}</td>
+                <td>
+                  <span class="status-badge" [class]="getStatusClass(reservation.status)">
+                    {{ getStatusText(reservation.status) }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+</div>

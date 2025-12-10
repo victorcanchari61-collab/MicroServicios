@@ -1,0 +1,174 @@
+<div class="dashboard-page">
+  <header class="page-header">
+    <div class="header-content">
+      <div>
+        <h1>Panel de Administración</h1>
+        <p>Bienvenido, {{ currentUser()?.name }}</p>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <main class="page-main">
+    <div class="actions-bar">
+      <button class="btn-primary" (click)="openCreateModal()">
+        ➕ Crear Hotel
+      </button>
+    </div>
+
+    @if (loading() && hotels().length === 0) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Cargando hoteles...</p>
+      </div>
+    } @else if (hotels().length === 0) {
+      <div class="empty-state">
+        <div class="icon">🏨</div>
+        <h2>No hay hoteles registrados</h2>
+        <p>Crea tu primer hotel para comenzar</p>
+        <button class="btn-primary" (click)="openCreateModal()">
+          Crear Hotel
+        </button>
+      </div>
+    } @else {
+      <div class="hotels-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Hotel</th>
+              <th>Ubicación</th>
+              <th>Estrellas</th>
+              <th>Precio/Noche</th>
+              <th>Habitaciones</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (hotel of hotels(); track hotel.id) {
+              <tr>
+                <td>
+                  <div class="hotel-info">
+                    <span class="hotel-icon">🏨</span>
+                    <div>
+                      <div class="hotel-name">{{ hotel.name }}</div>
+                      <div class="hotel-description">{{ hotel.description }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="location">
+                    📍 {{ hotel.city }}, {{ hotel.country }}
+                  </div>
+                </td>
+                <td>
+                  <div class="stars">
+                    @for (star of [].constructor(hotel.stars); track $index) {
+                      <span>⭐</span>
+                    }
+                  </div>
+                </td>
+                <td>
+                  <div class="price">S/ {{ hotel.pricePerNight }}</div>
+                </td>
+                <td>
+                  <div class="rooms">{{ hotel.availableRooms }} disponibles</div>
+                </td>
+                <td>
+                  <div class="actions">
+                    <button class="btn-rooms" (click)="manageRooms(hotel.id)" title="Gestionar Habitaciones">
+                      🛏️
+                    </button>
+                    <button class="btn-edit" (click)="openEditModal(hotel)" title="Editar">
+                      ✏️
+                    </button>
+                    <button class="btn-delete" (click)="deleteHotel(hotel)" title="Eliminar">
+                      🗑️
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </main>
+
+  <!-- Modal -->
+  @if (showModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>{{ editingHotel() ? 'Editar Hotel' : 'Crear Hotel' }}</h2>
+          <button class="btn-close" (click)="closeModal()">✕</button>
+        </div>
+        
+        <form [formGroup]="hotelForm" (ngSubmit)="submitHotel()" class="hotel-form">
+          <div class="form-group">
+            <label>Nombre del Hotel *</label>
+            <input type="text" formControlName="name" placeholder="Hotel Paradise">
+          </div>
+
+          <div class="form-group">
+            <label>Descripción *</label>
+            <textarea formControlName="description" rows="3" placeholder="Descripción del hotel..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ciudad *</label>
+              <input type="text" formControlName="city" placeholder="Lima">
+            </div>
+            <div class="form-group">
+              <label>País *</label>
+              <input type="text" formControlName="country" placeholder="Perú">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Dirección *</label>
+            <input type="text" formControlName="address" placeholder="Av. Principal 123">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Estrellas *</label>
+              <input type="number" formControlName="stars" min="1" max="5">
+            </div>
+            <div class="form-group">
+              <label>Precio por Noche (S/) *</label>
+              <input type="number" formControlName="pricePerNight" min="0" step="0.01">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Total de Habitaciones *</label>
+              <input type="number" formControlName="totalRooms" min="0">
+            </div>
+            <div class="form-group">
+              <label>Habitaciones Disponibles *</label>
+              <input type="number" formControlName="availableRooms" min="0">
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" (click)="closeModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="hotelForm.invalid || loading()">
+              @if (loading()) {
+                <span class="spinner-sm"></span>
+                Guardando...
+              } @else {
+                {{ editingHotel() ? 'Actualizar' : 'Crear' }}
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

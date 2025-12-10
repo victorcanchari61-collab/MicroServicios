@@ -1,0 +1,93 @@
+<div class="rooms-container">
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">← Volver</button>
+    <h1>Gestión de Habitaciones</h1>
+    <button class="btn-primary" (click)="openCreateModal()">+ Nueva Habitación</button>
+  </div>
+
+  <div class="loading" *ngIf="loading()">
+    <p>Cargando habitaciones...</p>
+  </div>
+
+  <div class="rooms-grid" *ngIf="!loading() && rooms().length > 0">
+    <div class="room-card" *ngFor="let room of rooms()">
+      <div class="room-header">
+        <h3>Habitación {{ room.roomNumber }}</h3>
+        <span class="room-status" [class.available]="room.isAvailable" [class.unavailable]="!room.isAvailable">
+          {{ room.isAvailable ? 'Disponible' : 'No Disponible' }}
+        </span>
+      </div>
+      
+      <div class="room-details">
+        <p><strong>Tipo:</strong> {{ room.roomType }}</p>
+        <p><strong>Capacidad:</strong> {{ room.capacity }} persona(s)</p>
+        <p><strong>Precio:</strong> ${{ room.pricePerNight }} / noche</p>
+        <p *ngIf="room.description"><strong>Descripción:</strong> {{ room.description }}</p>
+      </div>
+
+      <div class="room-actions">
+        <button class="btn-edit" (click)="openEditModal(room)">Editar</button>
+        <button class="btn-toggle" (click)="toggleAvailability(room)">
+          {{ room.isAvailable ? 'Deshabilitar' : 'Habilitar' }}
+        </button>
+        <button class="btn-delete" (click)="deleteRoom(room.id)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading() && rooms().length === 0">
+    <p>No hay habitaciones registradas para este hotel</p>
+    <button class="btn-primary" (click)="openCreateModal()">Crear Primera Habitación</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal()" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Editar Habitación' : 'Nueva Habitación' }}</h2>
+      <button class="btn-close" (click)="closeModal()">×</button>
+    </div>
+
+    <form (ngSubmit)="saveRoom()">
+      <div class="form-group">
+        <label>Número de Habitación *</label>
+        <input type="text" [(ngModel)]="currentRoom.roomNumber" name="roomNumber" required>
+      </div>
+
+      <div class="form-group">
+        <label>Tipo de Habitación *</label>
+        <select [(ngModel)]="currentRoom.roomType" name="roomType" required>
+          <option *ngFor="let type of roomTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Capacidad *</label>
+        <input type="number" [(ngModel)]="currentRoom.capacity" name="capacity" min="1" required>
+      </div>
+
+      <div class="form-group">
+        <label>Precio por Noche *</label>
+        <input type="number" [(ngModel)]="currentRoom.pricePerNight" name="pricePerNight" min="0.01" step="0.01" required>
+      </div>
+
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea [(ngModel)]="currentRoom.description" name="description" rows="3"></textarea>
+      </div>
+
+      <div class="form-group" *ngIf="isEditMode">
+        <label>
+          <input type="checkbox" [(ngModel)]="currentRoom.isAvailable" name="isAvailable">
+          Disponible
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn-primary">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+      </div>
+    </form>
+  </div>
+</div>
