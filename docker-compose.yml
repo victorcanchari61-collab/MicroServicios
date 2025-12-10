@@ -1,0 +1,140 @@
+services:
+  postgres-users:
+    image: postgres:15-alpine
+    container_name: users-db
+    environment:
+      POSTGRES_DB: users_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5440:5432"
+    volumes:
+      - users-data:/var/lib/postgresql/data
+
+  postgres-hotels:
+    image: postgres:15-alpine
+    container_name: hotels-db
+    environment:
+      POSTGRES_DB: hotels_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5441:5432"
+    volumes:
+      - hotels-data:/var/lib/postgresql/data
+
+  sqlserver-reservations:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: reservations-db
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: YourStrong@Passw0rd
+      MSSQL_PID: Express
+    ports:
+      - "1440:1433"
+    volumes:
+      - reservations-data:/var/opt/mssql
+
+  mongodb-notifications:
+    image: mongo:7
+    container_name: notifications-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    ports:
+      - "27020:27017"
+    volumes:
+      - notifications-data:/data/db
+
+  users-ms:
+    build:
+      context: ./users-ms
+      dockerfile: Dockerfile
+    container_name: users-service
+    ports:
+      - "8001:8000"
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres-users
+      DB_PORT: 5432
+      DB_DATABASE: users_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      - postgres-users
+
+  hotels-ms:
+    build:
+      context: ./hotels-ms
+      dockerfile: Dockerfile
+    container_name: hotels-service
+    ports:
+      - "8002:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-hotels:5432/hotels_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - postgres-hotels
+
+  reservations-ms:
+    build:
+      context: ./reservations-ms
+      dockerfile: Dockerfile
+    container_name: reservations-service
+    ports:
+      - "8003:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver-reservations;Database=reservations_db;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True"
+    depends_on:
+      - sqlserver-reservations
+
+  notifications-ms:
+    build:
+      context: ./notifications-ms
+      dockerfile: Dockerfile
+    container_name: notifications-service
+    ports:
+      - "8004:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin@mongodb-notifications:27017/notifications_db?authSource=admin
+    depends_on:
+      - mongodb-notifications
+    restart: on-failure
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      JWT_SECRET: your-secret-key-change-in-production
+      USERS_SERVICE_URL: http://users-service:8000
+      HOTELS_SERVICE_URL: http://hotels-service:8080
+      RESERVATIONS_SERVICE_URL: http://reservations-service:8080
+      NOTIFICATIONS_SERVICE_URL: http://notifications-service:8080
+    depends_on:
+      - users-ms
+      - hotels-ms
+      - reservations-ms
+      - notifications-ms
+
+  frontend:
+    build:
+      context: ./frontend-reservas-hoteles
+      dockerfile: Dockerfile
+    container_name: frontend-app
+    ports:
+      - "4000:4000"
+    environment:
+      API_GATEWAY_URL: http://api-gateway:3000
+    depends_on:
+      - api-gateway
+
+volumes:
+  users-data:
+  hotels-data:
+  reservations-data:
+  notifications-data:

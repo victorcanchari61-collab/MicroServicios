@@ -1,0 +1,67 @@
+# Archivos temporales de prueba
+temp_admin.json
+test-login-client.json
+test-smtp-fixed.py
+
+# Node modules
+node_modules/
+frontend-reservas-hoteles/node_modules/
+frontend-reservas-hoteles/.angular/
+
+# Build outputs
+frontend-reservas-hoteles/dist/
+frontend-reservas-hoteles/.angular/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+postgres-data/
+mysql-data/
+
+# Java/Maven
+*.class
+*.jar
+*.war
+target/
+.mvn/
+mvnw
+mvnw.cmd
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+
+# Go
+*.exe
+*.test
+*.out
+vendor/
+
+# PHP/Laravel
+users-ms/vendor/
+users-ms/storage/*.key
+users-ms/.phpunit.result.cache
+users-ms/Homestead.json
+users-ms/Homestead.yaml
+users-ms/npm-debug.log
+users-ms/yarn-error.log
+
+# Logs
+*.log
+logs/
