@@ -1,3 +1,6 @@
+docker-compose up -d --build
+docker exec -it users-service php artisan migrate
+
 # Sistema de Reservas de Hoteles - Microservicios
 
 Sistema completo de reservas de hoteles con arquitectura de microservicios.
@@ -48,31 +51,34 @@ Sistema completo de reservas de hoteles con arquitectura de microservicios.
 git clone https://github.com/victorcanchari61-collab/MicroServicios.git
 cd MicroServicios
 
-# 2. Levantar todo (primera vez tarda más)
+# 2. Levantar todo (primera vez tarda 5-10 minutos)
 docker-compose up -d --build
 
-# 3. Esperar 30 segundos e inicializar DB
-docker exec -it users-service php artisan migrate
+# 3. Esperar a que todos los servicios estén listos (1-2 minutos)
+docker-compose logs -f
 
-# 4. Acceder al sistema
-# Frontend: http://localhost:4200
+# 4. Ejecutar migraciones de Laravel
+docker exec -it users-service php artisan migrate --force
+
+# 5. Acceder al sistema
 # API Gateway: http://localhost:3000
+# Frontend: http://localhost:4000
 ```
 
 ## 👥 Datos Iniciales
 
-El sistema viene con datos de prueba precargados:
+**IMPORTANTE:** El sistema inicia con bases de datos vacías. Debes:
 
-**Usuario Administrador:**
-- Email: `admin@hotel.com`
-- Password: `admin123`
+1. **Registrar un usuario administrador** desde el frontend o API
+2. **Crear hoteles** desde el panel de administrador
+3. **Agregar habitaciones** a cada hotel
 
-**Hoteles de ejemplo:**
-- Hotel Paradise (5 estrellas) - 3 habitaciones
-- Hotel Central (4 estrellas) - 3 habitaciones  
-- Hotel Cielo (4 estrellas) - 3 habitaciones
-
-**Total: 3 hoteles con 9 habitaciones listas para reservar**
+O ejecutar este script para datos de prueba:
+```bash
+# Crear usuario admin
+docker exec -it users-service php artisan tinker
+# Luego en tinker ejecutar el código para crear admin
+```
 
 ## 📝 Comandos
 
